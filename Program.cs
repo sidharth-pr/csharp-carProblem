@@ -89,27 +89,12 @@
                 this.carType = "sports";
             }
 
-            public override void Drive(double currentSpeed) // Overridden method
-            {
-                base.Drive(currentSpeed);
-            }
-
             public override void Refuel(string fuelType)
             {
                 if (fuelType == "gas")
                     Console.WriteLine("Refueling with " + fuelType);
                 else
                     Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
-            }
-
-            public override void CalcPrice()
-            {
-                base.CalcPrice();
-            }
-
-            public override void CalcTravelTime(double distance)
-            {
-                base.CalcTravelTime(distance);
             }
         }
 
@@ -124,27 +109,12 @@
                 this.carType = "electric";
             }
 
-            public override void Drive(double currentSpeed) // Overridden method
-            {
-                base.Drive(currentSpeed);
-            }
-
             public override void Refuel(string fuelType)
             {
                 if (fuelType == "electricity")
                     Console.WriteLine("Refueling with " + fuelType);
                 else
                     Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
-            }
-
-            public override void CalcPrice()
-            {
-                base.CalcPrice();
-            }
-
-            public override void CalcTravelTime(double distance)
-            {
-                base.CalcTravelTime(distance);
             }
         }
 
@@ -159,27 +129,12 @@
                 this.carType = "hybrid";
             }
 
-            public override void Drive(double currentSpeed) // Overridden method
-            {
-                base.Drive(currentSpeed);
-            }
-
             public override void Refuel(string fuelType)
             {
                 if (fuelType == "electricity" || fuelType == "gas")
                     Console.WriteLine("Refueling with " + fuelType);
                 else
                     Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
-            }
-
-            public override void CalcPrice()
-            {
-                base.CalcPrice();
-            }
-
-            public override void CalcTravelTime(double distance)
-            {
-                base.CalcTravelTime(distance);
             }
         }
 
