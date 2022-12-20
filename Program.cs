@@ -52,7 +52,7 @@
                 Console.WriteLine("Total price is " + total);
             }
 
-            protected double actualDistance() // Calculates travel distance based on tire eco factors
+            protected double actualDistance(double tankDist) // Calculates travel distance based on tire eco factors
             {
                 double ef = tires[0].ecoFactor + tires[1].ecoFactor + tires[2].ecoFactor + tires[3].ecoFactor + tires[4].ecoFactor;
                 double newTankDist = tankDist * (1 + ef);
@@ -65,7 +65,7 @@
                 return noOfStops;
             }
 
-            private double calcTotalStopTime(double noOfStops, double tankStop) // Calculates time spent in tank stops
+            protected double calcTotalStopTime(double noOfStops, double tankStop) // Calculates time spent in tank stops
             {
                 double totalStop = (noOfStops * tankStop) / 60;
                 return totalStop;
@@ -75,7 +75,7 @@
             {
                 string i;
                 double hours = (travelTime - (60 * travelTime % 60) / 60);
-                double minutes = ((travelTime - hours0 * 60));
+                double minutes = ((travelTime - hours * 60));
                 if (noOfStops == 1)
                     i = "stop";
                 else
@@ -84,7 +84,7 @@
             }
             public virtual void calcTravelTime(double distance) // Calculates minimum travel time by considering maximum travel speed, refueling requirements, and eco factor of the tires
             {
-                double newTankDist = actualDistance(); // Function Call
+                double newTankDist = actualDistance(tankDist); // Function Call
                 double travelTime = distance / maxSpeed;
                 double noOfStops = calcTankStops(distance, newTankDist);
                 double totalStopTime = calcTotalStopTime(noOfStops, this.tankStop);
@@ -133,10 +133,23 @@
 
             public override void refuel(string fuelType)
             {
-                if (fuelType == "electricity" || fuelType == "gas")
+                if (fuelType == carType || fuelType == extraCarType)
                     Console.WriteLine("Refueling with " + fuelType);
                 else
                     Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
+            }
+
+            public override void calcTravelTime(double distance)
+            {
+                double newTankDist = actualDistance(tankDist); // Function Call
+                double newExtraTankDist = actualDistance(extraTankDist);
+                double travelTime = distance / maxSpeed;
+                double noOfStops = calcTankStops(distance, newTankDist);
+                double noOfStops1 = calcTankStops(distance, newExtraTankDist);
+                double totalStopTime = calcTotalStopTime(noOfStops, this.tankStop);
+                double totalStopTime1 = calcTotalStopTime(noOfStops, this.extraTankStop);
+                travelTime += totalStopTime + totalStopTime1;
+                printTravelTime(travelTime, noOfStops + noOfStops1, distance);
             }
         }
 
