@@ -15,20 +15,14 @@
             }
         }
 
-        class Car // Gasoline car class
+        class Car // Standard car class
         {
-            protected double maxSpeed, tankDist, tankStop; // Maximum Speed, Distance before fueling tank, Time to fuel tank
-            public string carName, carType; // Name of the car
+            protected double maxSpeed = 250, tankDist = 1200, tankStop = 5, carPrice = 25000; // Maximum Speed, Distance before fueling tank, Time to fuel tank, Cost of the car
+            public string carName, carType = "gasoline"; // Name of the car
             protected Tire[] tires = new Tire[5]; // 5 Tire objects
-            protected double carPrice; // Cost of the car
 
             public Car(string carName, Tire t1, Tire t2, Tire t3, Tire t4, Tire t5) // Constructor
             {
-                this.maxSpeed = 250;
-                this.tankStop = 5;
-                this.tankDist = 1200;
-                this.carPrice = 25000;
-                this.carType = "gasoline";
                 this.carName = carName;
                 this.tires[0] = t1;
                 this.tires[1] = t2;
@@ -46,7 +40,7 @@
 
             public virtual void Refuel(string fuelType) // Prints refueling details
             {
-                if (fuelType == "gas")
+                if (fuelType == this.carType)
                     Console.WriteLine("Refueling with " + fuelType);
                 else
                     Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
@@ -58,23 +52,44 @@
                 Console.WriteLine("Total price is " + total);
             }
 
-            private void actualDistance() // Calculates travel distance based on tire eco factors
+            protected double actualDistance() // Calculates travel distance based on tire eco factors
             {
                 double ef = tires[0].ecoFactor + tires[1].ecoFactor + tires[2].ecoFactor + tires[3].ecoFactor + tires[4].ecoFactor;
-                tankDist += ef * tankDist;
+                double newTankDist = tankDist * (1 + ef);
+                return newTankDist;
+            }
+   
+            protected double calcTankStops(double distance, double newTankDist) // Calculates the number of tank stops
+            {
+                double noOfStops = (distance - (distance % newTankDist)) / newTankDist;
+                return noOfStops;
             }
 
-            private double travelTime(double distance) // Private method used by CalcTravelTime to do some calculations
+            private double calcTotalStopTime(double noOfStops, double tankStop) // Calculates time spent in tank stops
             {
-                actualDistance(); // Function Call
-                double travelTime = this.maxSpeed / distance;
-                int noOfStops = Convert.ToInt32(distance / tankDist);
-                travelTime += (noOfStops * tankStop);
-                return travelTime;
+                double totalStop = (noOfStops * tankStop) / 60;
+                return totalStop;
+            }
+
+            protected void printTravelTime(double travelTime, double noOfStops, double distance) // To print the calculations of travel time methods
+            {
+                string i;
+                double hours = (travelTime - (60 * travelTime % 60) / 60);
+                double minutes = ((travelTime - hours0 * 60));
+                if (noOfStops == 1)
+                    i = "stop";
+                else
+                    i = "stops";
+                Console.WriteLine("Minimum travel time for {0}km is {1,2:f0}h {2,2:f0}min ({3} tank {4}).", distance, hours, minutes, noOfStops, i);
             }
             public virtual void CalcTravelTime(double distance) // Calculates minimum travel time by considering maximum travel speed, refueling requirements, and eco factor of the tires
             {
-                Console.WriteLine("Minimum travel time for " + distance + " is " + travelTime(distance));
+                double newTankDist = actualDistance(); // Function Call
+                double travelTime = distance / maxSpeed;
+                double noOfStops = calcTankStops(distance, newTankDist);
+                double totalStopTime = calcTotalStopTime(noOfStops, this.tankStop);
+                travelTime += totalStopTime;
+                printTravelTime(travelTime);
             }
         }
 
@@ -86,15 +101,7 @@
                 this.tankStop = 5;
                 this.tankDist = 1000;
                 this.carPrice = 80000;
-                this.carType = "sports";
-            }
-
-            public override void Refuel(string fuelType)
-            {
-                if (fuelType == "gas")
-                    Console.WriteLine("Refueling with " + fuelType);
-                else
-                    Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
+                this.carType = "gasoline";
             }
         }
 
@@ -106,27 +113,22 @@
                 this.tankStop = 80;
                 this.tankDist = 600;
                 this.carPrice = 70000;
-                this.carType = "electric";
-            }
-
-            public override void Refuel(string fuelType)
-            {
-                if (fuelType == "electricity")
-                    Console.WriteLine("Refueling with " + fuelType);
-                else
-                    Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
+                this.carType = "electricity";
             }
         }
 
         class HybridCar : Car // Hybrid car class
         {
+            private double extraTankDist = 2000;
+            private double extraTankStop = 30;
+            private string extraCarType = "gasoline";
             public HybridCar(string carName, Tire t1, Tire t2, Tire t3, Tire t4, Tire t5) : base(carName, t1, t2, t3, t4, t5) // Constructor with parent constructor call
             {
                 this.maxSpeed = 230;
                 this.tankStop = 30;
                 this.tankDist = 2000;
                 this.carPrice = 40000;
-                this.carType = "hybrid";
+                this.carType = "electricity";
             }
 
             public override void Refuel(string fuelType)
@@ -145,10 +147,10 @@
             Tire snow = new Tire("Pirelli Cinturato Winter", 60, -0.04); // Declaration of Tire objects
 
             Car[] cars = new Car[4]; 
-            cars[0] = new Car("BMW_G30", normal, normal, normal, normal, normal);
-            cars[1] = new SportCar("Ferrari_288", eco, eco, normal, normal, normal);
-            cars[2] = new ElectricCar("Tesla_S", snow, snow, snow, snow, snow);
-            cars[3] = new HybridCar("Lexus_IS_300h", eco, eco, eco, eco, eco); // Declaration of Car objects
+            cars[0] = new Car("BMW G30", normal, normal, normal, normal, normal);
+            cars[1] = new SportCar("Ferrari 288", eco, eco, normal, normal, normal);
+            cars[2] = new ElectricCar("Tesla S", snow, snow, snow, snow, snow);
+            cars[3] = new HybridCar("Lexus IS 300h", eco, eco, eco, eco, eco); // Declaration of Car objects
 
             foreach (Car car in cars)
             {
