@@ -31,14 +31,14 @@
                 this.tires[4] = t5;
             }
             
-            public virtual void Drive(double currentSpeed) // Prints several details about the car
+            public virtual void drive(double currentSpeed) // Prints several details about the car
             {
                 double percent = currentSpeed / maxSpeed * 100;
                 Console.WriteLine("Driving a " + this.carName + " " + this.carType + " car with " + percent + " of maximal speed.");
                 Console.WriteLine("Wheels:\r\n Front (L, R): " + tires[0] + " " + tires[1] + "\r\n Rear(L, R): " + tires[2] + " " + tires[3] + "\r\n Spare: " + tires[4]);
             }
 
-            public virtual void Refuel(string fuelType) // Prints refueling details
+            public virtual void refuel(string fuelType) // Prints refueling details
             {
                 if (fuelType == this.carType)
                     Console.WriteLine("Refueling with " + fuelType);
@@ -46,7 +46,7 @@
                     Console.WriteLine("Refueling with " + fuelType + " is not allowed!");
             }
 
-            public virtual void CalcPrice() // Calculates total price of car including cost of the tires being used
+            public virtual void calcPrice() // Calculates total price of car including cost of the tires being used
             {
                 double total = carPrice + tires[0].tirePrice + tires[1].tirePrice + tires[2].tirePrice + tires[3].tirePrice + tires[4].tirePrice;
                 Console.WriteLine("Total price is " + total);
@@ -82,14 +82,14 @@
                     i = "stops";
                 Console.WriteLine("Minimum travel time for {0}km is {1,2:f0}h {2,2:f0}min ({3} tank {4}).", distance, hours, minutes, noOfStops, i);
             }
-            public virtual void CalcTravelTime(double distance) // Calculates minimum travel time by considering maximum travel speed, refueling requirements, and eco factor of the tires
+            public virtual void calcTravelTime(double distance) // Calculates minimum travel time by considering maximum travel speed, refueling requirements, and eco factor of the tires
             {
                 double newTankDist = actualDistance(); // Function Call
                 double travelTime = distance / maxSpeed;
                 double noOfStops = calcTankStops(distance, newTankDist);
                 double totalStopTime = calcTotalStopTime(noOfStops, this.tankStop);
                 travelTime += totalStopTime;
-                printTravelTime(travelTime);
+                printTravelTime(travelTime, noOfStops, distance);
             }
         }
 
@@ -131,7 +131,7 @@
                 this.carType = "electricity";
             }
 
-            public override void Refuel(string fuelType)
+            public override void refuel(string fuelType)
             {
                 if (fuelType == "electricity" || fuelType == "gas")
                     Console.WriteLine("Refueling with " + fuelType);
@@ -154,9 +154,12 @@
 
             foreach (Car car in cars)
             {
-                car.Drive(230);
-                car.Refuel("gasoline");
-                car.Refuel("electricity");
+                car.drive(230);
+                car.refuel("gasoline");
+                car.refuel("electricity");
+                car.calcPrice();
+                car.calcTravelTime(2000);
+                Console.ReadLine();
             }
         }
     }
